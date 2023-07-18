@@ -3,8 +3,9 @@ import datetime
 class Person:
     """Class representing person to chat with."""
 
-    def __init__(self, name: str, frequency: int, last_chat_date: datetime.datetime,
-                 notes: str) -> None:
+    def __init__(self, name: str = "Unnamed", frequency: int = 365,
+                 last_chat_date: datetime.datetime = datetime.date.today,
+                 notes: str = None) -> None:
         self._name = name
         self._frequency = frequency
         self._last_chat_date = last_chat_date
@@ -24,6 +25,10 @@ class Person:
             self._next_chat_date = self._find_next_chat_date(last_chat_date,
                                                              self._frequency)
 
-    def next_chat_date(self):
+    def next_chat_date(self) -> datetime.datetime:
         """Return the next chat date."""
         return self._next_chat_date
+    
+    def get_full_person_details(self):
+        return (self._name, self._frequency, self._last_chat_date, self._notes,
+                self._next_chat_date)
