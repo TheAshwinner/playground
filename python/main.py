@@ -5,6 +5,7 @@ import datetime
 def create_subprocess():
     async_playground.create_subprocess()
     async_playground.create_sleeping_subprocess(5)
+    async_playground.create_threads_for_blocking_io(sleep_time=1, io_call_count=5)
 
 def create_and_update_person():
     mom = Person(name="test test", frequency=7,

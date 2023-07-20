@@ -1,5 +1,6 @@
 import subprocess
 import time
+from threading import Thread
 
 def create_subprocess():
     """Create a basic subprocess calling `echo`.
@@ -32,3 +33,37 @@ def create_sleeping_subprocess(process_num: int):
         proc.communicate()
     end_time = time.time()
     print(f'Finished create_sleeping_subprocess in {end_time-start_time:.3} seconds.')
+
+def create_threads_for_blocking_io(sleep_time: int, io_call_count: int):
+    """Create threads for blocking I/O and compare with no threads.
+
+    Tip 53 in Effective Python. Threads are useful for concurrent
+    programming (such as for blocking I/O), but not as much for
+    parallelism. Some background: parallelism is hard for CPython
+    because of the Global Interpreter Lock.
+    """
+    print('Begin create_threads_for_blocking_io()')
+    def blocking_io(sleep_time: int):
+        time.sleep(sleep_time)
+    
+    # Test out multiple blocking_io calls without threads.
+    start_time_no_threads = time.time()
+    for _ in range(io_call_count):
+        blocking_io(sleep_time=sleep_time)
+    end_time_no_threads = time.time()
+    print(f'Total time for blocking io with no threads: '
+          f'{end_time_no_threads - start_time_no_threads:.3}')
+
+    # Test out multiple blocking_io calls with threads.
+    start_time_threads = time.time()
+    threads = []
+    for _ in range(io_call_count):
+        thread = Thread(target=blocking_io, args=[sleep_time])
+        thread.start()
+        threads.append(thread)
+    for thread in threads:
+        thread.join()
+    end_time_threads = time.time()
+    print(f'Total time for blocking io with threads: '
+          f'{end_time_threads - start_time_threads:.3}')
+    print('Ending create_threads_for_blocking_io()')
