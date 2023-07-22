@@ -1,6 +1,6 @@
 import subprocess
 import time
-from threading import Thread
+from threading import Thread, Lock
 
 def create_subprocess():
     """Create a basic subprocess calling `echo`.
@@ -67,3 +67,63 @@ def create_threads_for_blocking_io(sleep_time: int, io_call_count: int):
     print(f'Total time for blocking io with threads: '
           f'{end_time_threads - start_time_threads:.3}')
     print('Ending create_threads_for_blocking_io()')
+
+# The following comes from item 54 in Effective Python:
+# Use Lock to prevent data races in threads.
+# TODO: replace this with metaclasses?
+class Counter:
+    """Counter class with no mutex."""
+    def __init__(self):
+        self.count = 0
+    
+    def increment(self):
+        # Note that this is not an atomic operation in Python.
+        self.count += 1
+
+class LockedCounter:
+    """LockedCounter class with mutex."""
+    def __init__(self):
+        self.count = 0
+        self.lock = Lock()
+    
+    def increment(self):
+        with self.lock:
+            self.count += 1
+
+def increment_counter(worker_count: int, increment_count: int):
+    def worker(count: int, counter: Counter):
+        for _ in range(count):
+            counter.increment()
+
+    my_counter = Counter()
+    threads = []
+    for _ in range(worker_count):
+        thread = Thread(target=worker, args=[increment_count, my_counter])
+        threads.append(thread)
+        thread.start()
+    for thread in threads:
+        thread.join()
+    
+    expected_count = worker_count * increment_count
+    actual_count = my_counter.count
+    print(f'Expected count: {expected_count}, actual count: {actual_count}')
+
+# TODO: This function is redundant. Remove this once abstract class/metaclass
+# has been introduced.
+def increment_counter_with_mutex(worker_count: int, increment_count: int):
+    def worker(count: int, counter: Counter):
+        for _ in range(count):
+            counter.increment()
+
+    my_counter = LockedCounter()
+    threads = []
+    for _ in range(worker_count):
+        thread = Thread(target=worker, args=[increment_count, my_counter])
+        threads.append(thread)
+        thread.start()
+    for thread in threads:
+        thread.join()
+    
+    expected_count = worker_count * increment_count
+    actual_count = my_counter.count
+    print(f'Expected count: {expected_count}, actual count: {actual_count}')

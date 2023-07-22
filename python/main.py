@@ -1,11 +1,15 @@
+# Usage: `python3 python/main.py`
 from people.person import Person
 from concurrency_parallelism import async_playground
 import datetime
 
 def create_subprocess():
-    async_playground.create_subprocess()
-    async_playground.create_sleeping_subprocess(5)
-    async_playground.create_threads_for_blocking_io(sleep_time=1, io_call_count=5)
+    # async_playground.create_subprocess()
+    # async_playground.create_sleeping_subprocess(5)
+    # async_playground.create_threads_for_blocking_io(sleep_time=1, io_call_count=5)
+    async_playground.increment_counter(worker_count=20, increment_count=100000)
+    async_playground.increment_counter_with_mutex(
+        worker_count=20,increment_count=100000)
 
 def create_and_update_person():
     mom = Person(name="test test", frequency=7,
