@@ -12,6 +12,7 @@ using namespace std;
 int main() {
     std::cout << "Hello world!" << endl;
     generic_programming::test_function();
+    generic_programming::test_compare_template();
     testing::benchmarking_inline_function();
     return 0;
 }
