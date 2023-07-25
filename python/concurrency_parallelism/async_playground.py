@@ -127,3 +127,22 @@ def increment_counter_with_mutex(worker_count: int, increment_count: int):
     expected_count = worker_count * increment_count
     actual_count = my_counter.count
     print(f'Expected count: {expected_count}, actual count: {actual_count}')
+
+def raising_exception_in_thread():
+    """This function tests if threads actually don't raise error messages.
+
+    One might expect the error from the thread to be reraised in the main
+    program, but this doesn't appear to be the case. The error is simply
+    printed in sys.stderr and then the program continues as if
+    nothing went wrong.
+    
+    This is EffectivePython tip 57.
+    """
+    def test_function():
+        print('Hello world!')
+        raise ValueError('This is a ValueError.')
+
+    thread = Thread(target=test_function)
+    thread.start()
+    thread.join()
+    print('The function continued running normally.')

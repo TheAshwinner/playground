@@ -13,7 +13,8 @@ def create_subprocess():
     # producer_consumer_queue.run_producer_consumer()
     # producer_consumer_queue.run_basic_queue()
     # producer_consumer_queue.run_basic_queue_with_buffer()
-    producer_consumer_queue.run_closeable_queue()
+    # producer_consumer_queue.run_closeable_queue()
+    async_playground.raising_exception_in_thread()
 
 def create_and_update_person():
     mom = Person(name="test test", frequency=7,
