@@ -1,6 +1,6 @@
 # Usage: `python3 python/main.py`
 from people.person import Person
-from concurrency_parallelism import async_playground, producer_consumer_queue
+from concurrency_parallelism import async_playground, producer_consumer_queue, conway_game_of_life
 import datetime
 
 def create_subprocess():
@@ -14,7 +14,8 @@ def create_subprocess():
     # producer_consumer_queue.run_basic_queue()
     # producer_consumer_queue.run_basic_queue_with_buffer()
     # producer_consumer_queue.run_closeable_queue()
-    async_playground.raising_exception_in_thread()
+    # async_playground.raising_exception_in_thread()
+    conway_game_of_life.run_game_standard(5, 5)
 
 def create_and_update_person():
     mom = Person(name="test test", frequency=7,
