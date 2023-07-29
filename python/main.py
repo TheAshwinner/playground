@@ -1,6 +1,7 @@
 # Usage: `python3 python/main.py`
 from people.person import Person
 from concurrency_parallelism import async_playground, producer_consumer_queue, conway_game_of_life
+import random_tricks
 import datetime
 
 def create_subprocess():
@@ -31,6 +32,7 @@ def main():
     create_and_update_person()
 
     create_subprocess()
+    print(random_tricks.find_longest_name(["Ashwin", "John", "Samuel", "Strauss"]))
 
 if __name__ == "__main__":
     main()
