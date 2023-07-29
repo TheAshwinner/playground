@@ -33,6 +33,7 @@ def main():
 
     create_subprocess()
     print(random_tricks.find_longest_name(["Ashwin", "John", "Samuel", "Strauss"]))
+    random_tricks.walrus_tester()
 
 if __name__ == "__main__":
     main()
