@@ -23,6 +23,7 @@ def create_subprocess():
     # async_playground.raising_exception_in_thread()
     conway_game_of_life.run_game_standard(5, 5)
     conway_game_of_life.run_game_locked(5, 5)
+    conway_game_of_life.run_game_pooled(5, 5)
 
 
 def create_and_update_person():

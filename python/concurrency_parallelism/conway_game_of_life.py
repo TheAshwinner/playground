@@ -7,6 +7,7 @@
 # of locks can cause deadlocks (or at least some other issues).
 # 3. Avoid using threads for fanout: at least in this case, it seems to
 # increase the time the program takes to run by an order of magnitude.
+from concurrent.futures import ThreadPoolExecutor
 from threading import Lock, Thread
 import time
 
@@ -126,6 +127,20 @@ def simulate_threaded(grid: Grid):
     return next_grid
 
 
+def simulate_pool(pool: ThreadPoolExecutor, grid: Grid) -> Grid:
+    next_grid = LockedGrid(height=grid.height, width=grid.width)
+    futures: list[ThreadPoolExecutor] = []
+    for y in range(grid.height):
+        for x in range(grid.width):
+            args = (x, y, grid.get, next_grid.set)
+            future = pool.submit(step_cell, *args)
+            futures.append(future)
+    for future in futures:
+        future.result()
+    print(next_grid)
+    return next_grid
+
+
 def generate_grid1(width: int, height: int, grid: Grid) -> Grid:
     """Generate grid.
     Initial grid:
@@ -169,3 +184,34 @@ def run_game_locked(width: int, height: int):
         grid = simulate_threaded(grid=grid)
     end_time = time.time()
     print(f"Total time taken: {end_time-start_time:.3} seconds.")
+
+
+def run_game_pooled(width: int, height: int):
+    """Run Conway Game of Life simulator with ThreadPoolExecutor.
+
+    This corresponds to tip 59 in Effective Python. It allows easier
+    refactoring than queues, and threads can be allocated in advance
+    so we don't need to pay the overhead cost of threads for every
+    call of `simulate_pool()` (unlike the equivalent for the naive
+    thread solution). Also, errors raised in ThreadPoolExecutor get
+    reraised in the main process, unlike in threads.
+    One problem though is that we have to define the max number of
+    threads in advance with the `max_workers` arg.
+
+    In practice, this function seems to be about twice as fast as
+    `run_game_threaded()`.
+
+    Args:
+        width (int): width of game board.
+        height (int): height of game board.
+    """
+    start_time = time.time()
+    grid = LockedGrid(width=width, height=height)
+    grid = generate_grid1(width=width, height=height, grid=grid)
+    print(grid.__str__())
+    print(grid.height)
+    with ThreadPoolExecutor(max_workers=10) as pool:
+        for _ in range(10):
+            grid = simulate_pool(pool, grid=grid)
+    end_time = time.time()
+    print(f"Total time taken for ThreadPoolExecutor: {end_time-start_time:.3} seconds.")
