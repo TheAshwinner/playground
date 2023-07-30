@@ -1,4 +1,3 @@
-
 def find_longest_name(name_list: list[str]):
     """Find longest name in a list of names.
 
@@ -23,22 +22,18 @@ def find_longest_name(name_list: list[str]):
 
 def walrus_tester():
     """Test out walrus operator functionality."""
-    fresh_fruit = {
-        'orange': 11,
-        'apple': 4,
-        'mango': 7
-    }
+    fresh_fruit = {"orange": 11, "apple": 4, "mango": 7}
 
-    if mango_count := fresh_fruit.get('mango', 0):
-        print(f'Make mango lassi with {mango_count} mangoes.')
-    
+    if mango_count := fresh_fruit.get("mango", 0):
+        print(f"Make mango lassi with {mango_count} mangoes.")
+
     def pick_fruit(count: int):
         if count > 3:
             return None
         else:
-            return 'mango'
-    
+            return "mango"
+
     count = 0
     while fruit := pick_fruit(count):
-        print(f'There are {fresh_fruit.get(fruit)} fruits of type {fruit}')
+        print(f"There are {fresh_fruit.get(fruit)} fruits of type {fruit}")
         count += 1

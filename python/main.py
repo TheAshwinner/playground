@@ -1,8 +1,13 @@
 # Usage: `python3 python/main.py`
 from people.person import Person
-from concurrency_parallelism import async_playground, producer_consumer_queue, conway_game_of_life
+from concurrency_parallelism import (
+    async_playground,
+    producer_consumer_queue,
+    conway_game_of_life,
+)
 import random_tricks
 import datetime
+
 
 def create_subprocess():
     # async_playground.create_subprocess()
@@ -19,21 +24,27 @@ def create_subprocess():
     conway_game_of_life.run_game_standard(5, 5)
     conway_game_of_life.run_game_locked(5, 5)
 
+
 def create_and_update_person():
-    mom = Person(name="test test", frequency=7,
-                 last_chat_date=datetime.datetime(year=2023, month=7, day=1),
-                 notes="Mom")
+    mom = Person(
+        name="test test",
+        frequency=7,
+        last_chat_date=datetime.datetime(year=2023, month=7, day=1),
+        notes="Mom",
+    )
     mom.update_last_chat(datetime.datetime(year=2023, month=7, day=7))
     print(mom.next_chat_date())
 
+
 def main():
     print("Hello, world!")
-    
+
     create_and_update_person()
 
     create_subprocess()
     print(random_tricks.find_longest_name(["Ashwin", "John", "Samuel", "Strauss"]))
     random_tricks.walrus_tester()
+
 
 if __name__ == "__main__":
     main()
