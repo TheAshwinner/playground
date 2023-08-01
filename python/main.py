@@ -24,6 +24,7 @@ def create_subprocess():
     conway_game_of_life.run_game_standard(5, 5)
     conway_game_of_life.run_game_locked(5, 5)
     conway_game_of_life.run_game_pooled(5, 5)
+    conway_game_of_life.run_game_coroutine(5, 5)
 
 
 def create_and_update_person():

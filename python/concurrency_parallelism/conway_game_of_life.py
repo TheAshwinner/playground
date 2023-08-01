@@ -10,9 +10,11 @@
 from concurrent.futures import ThreadPoolExecutor
 from threading import Lock, Thread
 import time
+import asyncio
 
 ALIVE = "*"
 DEAD = "-"
+STEP_COUNT = 10
 
 
 class Grid:
@@ -96,10 +98,28 @@ def game_logic(state, alive_neighbor_count: int):
     return state
 
 
+async def game_logic_coroutine(state, alive_neighbor_count: int):
+    if state == DEAD and alive_neighbor_count == 3:
+        return ALIVE  # Regenerate
+    elif state == ALIVE:
+        if alive_neighbor_count > 3:
+            return DEAD  # Die: too many.
+        elif alive_neighbor_count < 2:
+            return DEAD  # Die: too few.
+    return state
+
+
 def step_cell(x: int, y: int, get, set):
     state = get(x, y)
     neighbors = count_neighbors(x=x, y=y, get=get)
     next_state = game_logic(state=state, alive_neighbor_count=neighbors)
+    set(x, y, next_state)
+
+
+async def step_cell_coroutine(x: int, y: int, get, set):
+    state = get(x, y)
+    neighbors = count_neighbors(x=x, y=y, get=get)
+    next_state = await game_logic_coroutine(state=state, alive_neighbor_count=neighbors)
     set(x, y, next_state)
 
 
@@ -141,6 +161,19 @@ def simulate_pool(pool: ThreadPoolExecutor, grid: Grid) -> Grid:
     return next_grid
 
 
+async def simulate_coroutine(grid: Grid):
+    next_grid = Grid(height=grid.height, width=grid.width)
+    tasks = []
+    for y in range(grid.height):
+        for x in range(grid.width):
+            task = step_cell_coroutine(x=x, y=y, get=grid.get, set=next_grid.set)
+            tasks.append(task)
+
+    await asyncio.gather(*tasks)
+    print(next_grid)
+    return next_grid
+
+
 def generate_grid1(width: int, height: int, grid: Grid) -> Grid:
     """Generate grid.
     Initial grid:
@@ -163,7 +196,7 @@ def run_game_standard(width: int, height: int):
     grid = Grid(width=width, height=height)
     grid = generate_grid1(width=width, height=height, grid=grid)
     print(grid.__str__())
-    for _ in range(10):
+    for _ in range(STEP_COUNT):
         grid = simulate(grid=grid)
     end_time = time.time()
     print(f"Total time taken: {end_time-start_time:.3} seconds.")
@@ -180,7 +213,7 @@ def run_game_locked(width: int, height: int):
     grid = LockedGrid(width=width, height=height)
     grid = generate_grid1(width=width, height=height, grid=grid)
     print(grid.__str__())
-    for _ in range(10):
+    for _ in range(STEP_COUNT):
         grid = simulate_threaded(grid=grid)
     end_time = time.time()
     print(f"Total time taken: {end_time-start_time:.3} seconds.")
@@ -211,7 +244,17 @@ def run_game_pooled(width: int, height: int):
     print(grid.__str__())
     print(grid.height)
     with ThreadPoolExecutor(max_workers=10) as pool:
-        for _ in range(10):
+        for _ in range(STEP_COUNT):
             grid = simulate_pool(pool, grid=grid)
     end_time = time.time()
     print(f"Total time taken for ThreadPoolExecutor: {end_time-start_time:.3} seconds.")
+
+
+def run_game_coroutine(width: int, height: int):
+    start_time = time.time()
+    grid = LockedGrid(width=width, height=height)
+    grid = generate_grid1(width=width, height=height, grid=grid)
+    for _ in range(STEP_COUNT):
+        grid = asyncio.run(simulate_coroutine(grid=grid))
+    end_time = time.time()
+    print(f"Total time taken for RunGameCoroutine: {end_time-start_time:.3} seconds.")
