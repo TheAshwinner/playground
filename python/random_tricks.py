@@ -37,3 +37,22 @@ def walrus_tester():
     while fruit := pick_fruit(count):
         print(f"There are {fresh_fruit.get(fruit)} fruits of type {fruit}")
         count += 1
+
+
+def list_comprehension():
+    """Test list, set, dict comprehensions.
+
+    This corresponds to tip 27, 28 in Effective Python.
+    """
+    num_list = [x for x in range(10)]
+    even_square_list = [x**2 for x in num_list if x % 2 == 0]
+    print(even_square_list)
+    even_square_dict = {x: x**2 for x in num_list if x % 2 == 0}
+    print(even_square_dict)
+    three_cube_set = {x**3 for x in num_list if x % 3 == 0}
+    print(three_cube_set)
+
+    # List comprehensions support multiple if statements.
+    a = [x for x in num_list if x > 4 and x % 2 == 0]
+    b = [x for x in num_list if x > 4 if x % 2 == 0]
+    assert a == b
