@@ -56,3 +56,86 @@ def list_comprehension():
     a = [x for x in num_list if x > 4 and x % 2 == 0]
     b = [x for x in num_list if x > 4 if x % 2 == 0]
     assert a == b
+
+
+def sort_priority_tester():
+    """ """
+
+    def sort_priority(values, group):
+        """Sort a list based on which members are in `group`.
+
+        Args:
+            values (list): employees at a company
+            group (list): software engineers at the company
+        """
+
+        def helper(x):
+            if x in group:
+                return (0, x)
+            return (1, x)
+
+        values.sort(key=helper)
+
+    name_list = ["Bill", "Joe", "Cathy", "Ed", "Anna"]
+    swe_group = ["Joe", "Cathy"]
+    sort_priority(name_list, swe_group)
+    print(name_list)
+
+    def sort_priority2(values, group):
+        """Sort members if they are in `group` and track group members.
+
+        Because of scopes, the `found` in inner helper function will not
+        affect the outer helper function.
+
+        Args:
+            values (list): employees at a company
+            group (list): software engineers at the company
+        """
+        found = False
+
+        def helper(x):
+            if x in group:
+                found = True
+                return (0, x)
+            return (1, x)
+
+        values.sort(key=helper)
+        return found
+
+    name_list2 = ["Bill", "Joe", "Cathy", "Ed", "Anna"]
+    swe_group2 = ["Joe", "Cathy"]
+    found2 = sort_priority2(name_list2, swe_group2)
+    print(name_list2)
+    # We expect found to be true, since there are members of the swe_group2 present.
+    # Yet it turns out that `found` is None.
+    print("Found2:", found2)
+
+    def sort_priority3(values, group):
+        """Sort members if they are in `group` and track group members.
+
+        This uses nonlocal to make sure that inner scope `found` affects
+        outer scope `found`.
+
+        Args:
+            values (list): employees at a company
+            group (list): software engineers at the company
+        """
+        found = False
+
+        def helper(x):
+            nonlocal found
+            if x in group:
+                found = True
+                return (0, x)
+            return (1, x)
+
+        values.sort(key=helper)
+        return found
+
+    name_list3 = ["Bill", "Joe", "Cathy", "Ed", "Anna"]
+    swe_group3 = ["Joe", "Cathy"]
+    found3 = sort_priority3(name_list3, swe_group3)
+    print(name_list3)
+    # We expect found to be true, since there are members of the swe_group2 present.
+    # Yet it turns out that `found` is None.
+    print("Found3:", found3)
