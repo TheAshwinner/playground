@@ -48,6 +48,7 @@ def main():
     random_tricks.walrus_tester()
     random_tricks.list_comprehension()
     random_tricks.sort_priority_tester()
+    random_tricks.v_arg_tester()
 
 
 if __name__ == "__main__":

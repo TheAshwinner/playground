@@ -139,3 +139,53 @@ def sort_priority_tester():
     # We expect found to be true, since there are members of the swe_group2 present.
     # Yet it turns out that `found` is None.
     print("Found3:", found3)
+
+
+def v_arg_tester():
+    """Testing variable positional arguments (Effective Python tip 22)."""
+
+    def log1(message, values):
+        if not values:
+            print(message)
+        else:
+            values_str = ", ".join(str(v) for v in values)
+            print(f"{message}: {values_str}")
+
+    log1("Hi there", [4, 3, 6])
+    # log1("sup") # This will throw errors because `values` is expecting a variable.
+
+    def log2(message, *values):
+        if not values:
+            print(message)
+        else:
+            values_str = ", ".join(str(v) for v in values)
+            print(f"{message}: {values_str}")
+
+    log2("Hi there", [4, 3, 6])
+    log2("sup")  # This works as expected
+    log2("Favorite colors", ["red", "blue", "green"])
+
+    # Problems with using the star operator in functions:
+    # Problem 1: optional arguments are turned into a tuple before being
+    # passed into a function. You should only use variable arguments
+    # if you know the number of arguments is small.
+
+    def generator(num: int):
+        for i in range(num):
+            yield i
+
+    log2("Favorite numbers", *generator(7))
+
+    # Problem 2: you can't add new positional arguments without
+    # needing to migrate callers.
+    def log3(sequence, message, *values):
+        if not values:
+            print(f"seq: {sequence}: message {message}")
+        else:
+            values_str = ", ".join(str(v) for v in values)
+            print(f"seq: {sequence}: message {message}: {values_str}")
+
+    log3("sequence1", "test message", [4, 9, 7])
+    log3("Hi there", [4, 3, 6])  # This silently breaks.
+    # log3("sup")  # This breaks as expected.
+    log3("Favorite colors", ["red", "blue", "green"])  # This silently breaks.
