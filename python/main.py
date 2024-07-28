@@ -1,4 +1,5 @@
 # Usage: `python3 python/main.py`
+from typing import Sequence, Optional
 from people.person import Person
 from concurrency_parallelism import (
     async_playground,
@@ -7,6 +8,8 @@ from concurrency_parallelism import (
 )
 import random_tricks
 import datetime
+import time
+import os
 
 
 def create_subprocess():
@@ -38,6 +41,10 @@ def create_and_update_person():
     print(mom.next_chat_date())
 
 
+def api(num: int, new_str: Optional[str], names: list[str]):
+    print(num, new_str, names)
+
+
 def main():
     print("Hello, world!")
 
@@ -49,6 +56,19 @@ def main():
     random_tricks.list_comprehension()
     random_tricks.sort_priority_tester()
     random_tricks.v_arg_tester()
+    test_seq: Sequence[str] = ["test"]
+    if test_seq:
+        print("if test_seq printed")
+    if len(test_seq) >= 1:
+        print("if len(test_seq) >=0:")
+
+    print(str(int(time.time())))
+    print(datetime.datetime.now(tz=datetime.timezone.utc).strftime("%Y_%m_%d_%H_%M_%S"))
+    string = os.path.join("test", "test2")
+    print(string)
+
+    # api(4, ["hello", "hi"])
+    random_tricks.generator_testing()
 
 
 if __name__ == "__main__":

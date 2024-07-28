@@ -189,3 +189,16 @@ def v_arg_tester():
     log3("Hi there", [4, 3, 6])  # This silently breaks.
     # log3("sup")  # This breaks as expected.
     log3("Favorite colors", ["red", "blue", "green"])  # This silently breaks.
+
+
+def generator_testing():
+    """Tests a generator that"""
+
+    def get_name_length(names: list[str]):
+        for name in names:
+            yield len(name)
+
+    name_list = ["Bill", "Joe", "Cathy", "Ed", "Anna"]
+    it = get_name_length(name_list)
+    while next(it):
+        print(it)
